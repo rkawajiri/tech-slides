@@ -1,0 +1,15 @@
+{
+  "filters": {
+    "comments": true
+  },
+  "rules": {
+    "preset-ja-technical-writing": {
+      "sentence-length": false,
+      "max-ten": false,
+      "no-exclamation-question-mark": false,
+      "no-doubled-joshi": false,
+      "ja-no-mixed-period": false,
+      "no-mix-dearu-desumasu": false
+    }
+  }
+}
