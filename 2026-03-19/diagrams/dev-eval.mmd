@@ -1,6 +1,6 @@
 graph LR
-  C1["Tier 1<br>ANTLR4 形式検証"] -->|軽量・全件| C2["Tier 2<br>deepeval メトリクス"]
-  C2 -->|中量・CI| C3["Tier 3<br>LLM as a Judge"]
+  C1["Tier 1<br>ANTLR4 形式検証"] -->|軽量・全件| C2["Tier 2<br>LLM Judge（軽量モデル）"]
+  C2 -->|中量・CI| C3["Tier 3<br>LLM Judge（重厚モデル）"]
   C3 -->|重量・週次| C4[Deploy]
 
   style C1 fill:#dfd,stroke:#080,stroke-width:3px

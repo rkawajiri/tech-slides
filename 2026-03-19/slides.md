@@ -27,7 +27,7 @@ style: |
 
 ---
 
-## aitalk-role-play とは
+## めろ とは
 
 - AI キャラクターとの音声ロールプレイアプリ
 - LLM でシナリオ・セリフ・感情を生成
@@ -39,13 +39,13 @@ style: |
 
 ## 業界の流れ
 
-### 2024年 = **作る**年
-- LLM アプリが爆発的に増加
-- Prompt engineering / RAG / Agent の時代
+| 年 | テーマ | キーワード |
+|---|---|---|
+| 2024 | **作る** | Prompt engineering / RAG / Agent |
+| 2025 | **育てる** | LLMOps — 品質・運用・改善 |
+| 2026〜 | **自律** | AgentOps — Agent が自律的に動く |
 
-### 2025年 = **育てる**年
-- 品質の担保・運用・改善が課題に
-- **LLMOps** という分野が確立
+MLOps → LLMOps → **AgentOps** へ進化 / 本発表は **LLMOps** にフォーカス
 
 <!-- FEでいうと、React出始め→ テスト・CI/CD・監視が整った流れに似ている -->
 
@@ -86,6 +86,21 @@ style: |
 
 ---
 
+## LLM-as-a-Judge とは
+
+### LLM に評価させる
+- 人間の判定は高品質だがスケールしない
+- **LLM 自身に「審判」をさせる** → LLM-as-a-Judge
+
+### G-Eval — CoT で評価ステップ生成 → スコアリング
+- 人間評価との相関が高い（論文で実証済み）
+
+### deepeval — LLM-as-a-Judge フレームワーク
+- G-Eval ベースのメトリクスを **すぐ使える形** で提供
+- Faithfulness / Relevancy / Toxicity 等が組み込み → Tier 2/3 で活用
+
+---
+
 ## 3段階の評価 — Overview
 
 ![w:1000](diagrams/dev-eval.svg)
@@ -114,11 +129,11 @@ style: |
 
 ---
 
-## Tier 2: deepeval メトリクス
+## Tier 2: LLM Judge（軽量モデル）
 
 **FEの例え：ユニットテスト**
 
-- カスタムメトリクスで品質スコアを算出
+- deepeval + 軽量モデルで品質スコアを算出
 - **Faithfulness** — 事実に忠実か
 - **Relevancy** — 質問に対して適切か
 - **Toxicity** — 有害でないか
@@ -132,11 +147,11 @@ CI / バッチで定期実行、閾値でアラート
 
 ---
 
-## Tier 3: LLM as a Judge
+## Tier 3: LLM Judge（重厚モデル）
 
 **FEの例え：QAレビュー / E2Eテスト**
 
-- GPT-4 / Claude に「この応答は良いか？」を判定させる
+- deepeval + GPT-4 / Claude でより深い評価
 - ニュアンス・キャラクター一貫性を評価可能
 - **コストが高い → サンプリング実行**
 
@@ -153,14 +168,14 @@ CI / バッチで定期実行、閾値でアラート
 
 ## 3段階 vs テスト戦略
 
-| | Tier 1: 形式検証 | Tier 2: メトリクス | Tier 3: LLM Judge |
+| | Tier 1 形式検証 | Tier 2 Judge 軽量 | Tier 3 Judge 重厚 |
 |---|---|---|---|
-| **FEの例え** | Lint / 型チェック | ユニットテスト | QAレビュー |
-| **ツール** | ANTLR4 | deepeval | GPT-4 / Claude |
+| **FE例え** | Lint / 型チェック | ユニットテスト | QAレビュー |
+| **ツール** | ANTLR4 | deepeval + 軽量LLM | deepeval + GPT-4等 |
 | **対象** | 全件 | カスタム指標 | サンプリング |
 | **コスト** | ◎ 極小 | ○ 中程度 | △ 高い |
-| **実行頻度** | 毎回 | CI / バッチ | 週次 / 手動 |
-| **検出できるもの** | 構造エラー | 品質低下 | 微妙なニュアンス |
+| **頻度** | 毎回 | CI / バッチ | 週次 / 手動 |
+| **検出** | 構造エラー | 品質低下 | 微妙なニュアンス |
 
 <!-- テストピラミッドと同じ。下が広くて安い、上が狭くて高い -->
 
@@ -183,20 +198,10 @@ CI / バッチで定期実行、閾値でアラート
 - **OpenTelemetry** でトレース・メトリクスを統一収集
 - GCP サービスに分散して送信・分析
 
----
-
-## OTel 導入の苦労話
-
-### 概念理解が難しい
-- Span / Trace / Baggage ... 独自用語の壁
-
-### 言語差異
-- Python SDK と Go SDK で挙動が微妙に違う
-
-### GenAI Semantic Conventions
-- LLM 用の convention はまだ Experimental（`gen_ai.request.model` 等）
-
-> **Coding Agent（Claude）と相談しながら進めた** — Agent なしでは厳しかった
+**導入の苦労ポイント:**
+- 概念の壁（Span / Trace / Baggage）、Python と Go SDK の挙動差異
+- GenAI Semantic Conventions はまだ Experimental（`gen_ai.request.model` 等）
+- **Coding Agent（Claude）と相談しながら進めた**
 
 ---
 
@@ -204,7 +209,7 @@ CI / バッチで定期実行、閾値でアラート
 
 ![w:900](diagrams/feedback-loops.svg)
 
-開発と本番、**2種類のループ**が回り続ける
+開発と本番のループが回り、**Prompt設計と評価指標の両方**に還元される
 
 ---
 
@@ -226,21 +231,20 @@ CI / バッチで定期実行、閾値でアラート
 | ループ | トリガー | サイクル |
 |---|---|---|
 | ③ 長期改善 | ユーザー / 社内フィードバック | 週〜月単位 |
+| ④ 新しい評価指標 | 本番分析から開発評価へ還元 | 月単位 |
 
 ---
 
-## 標準フレームワークとの比較
+## DSPy — プロンプト最適化の自動化
 
-### Microsoft の LLMOps 提唱
-- Inner loop / Outer loop の概念
-- 我々の実装はこれに近い構造
+手動プロンプトの試行錯誤 → **自動で最適化できないか？**
 
-### DSPy の位置づけ
-- プロンプトの最適化を **自動化**
-- 評価メトリクスを定義 → 最適プロンプトを探索
-- aitalk-role-play では構造化プロンプトに活用
+### DSPy の 3ステップ
+1. **Signature** — 入出力を型で定義（`question -> answer`）
+2. **Module** — LLM呼び出しを部品化（ChainOfThought 等）
+3. **Optimizer** — 評価メトリクスを定義 → 最適プロンプトを自動探索
 
-> 標準に寄せつつ、自分たちのプロダクトに合わせてカスタマイズ
+めろ では構造化プロンプトの最適化に活用。deepeval × DSPy でループを回す
 
 ---
 

@@ -2,5 +2,6 @@ graph LR
   D[Deploy] --> M1[ルールベース] --> M2[LLM judge] --> M3[人間FB] --> A[分析・改善]
 
   A -.->|"③ 長期改善"| P[Prompt設計]
+  A -.->|"④ 新しい評価指標"| E[開発評価]
 
   style A fill:#fdd,stroke:#c00,stroke-width:3px
