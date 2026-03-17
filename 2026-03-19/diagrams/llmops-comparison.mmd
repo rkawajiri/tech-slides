@@ -1,0 +1,17 @@
+graph LR
+  subgraph General["一般的な LLMOps"]
+    direction LR
+    A1[Prompt設計] --> A2[評価] --> A3[Deploy] --> A4[監視] --> A5[フィードバック]
+    A5 --> A1
+  end
+
+  subgraph Ours["aitalk-role-play"]
+    direction LR
+    C1[Prompt設計] --> C2["3段階評価"] --> C3[Deploy] --> C4["3層監視"] --> C5[分析・改善]
+    C5 --> C1
+  end
+
+  style General fill:none,stroke:#999
+  style Ours fill:none,stroke:#36c
+  style C2 fill:#e8f0fe,stroke:#36c,stroke-width:2px
+  style C4 fill:#e8f0fe,stroke:#36c,stroke-width:2px

@@ -1,0 +1,8 @@
+graph LR
+  D0[Deploy] --> D1["ルールベース<br>全件・リアルタイム"]
+  D1 --> D2["LLM judge<br>サンプリング"]
+  D2 --> D3["人間フィードバック<br>エスカレーション"]
+
+  style D1 fill:#dfd,stroke:#080,stroke-width:3px
+  style D2 fill:#ffd,stroke:#a80,stroke-width:3px
+  style D3 fill:#fdd,stroke:#c00,stroke-width:3px

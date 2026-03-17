@@ -5,9 +5,18 @@
     "build": "for dir in $(find . -maxdepth 1 -regex './[0-9].*' -type d); do marp \"$dir/slides.md\" -o \"dist/$(basename $dir)/index.html\"; done",
     "preview": "marp --preview",
     "pdf": "marp --pdf",
-    "new": "bash scripts/new-slide.sh"
+    "new": "bash scripts/new-slide.sh",
+    "diagrams": "for f in 2026-03-19/diagrams/*.mmd; do mmdc -i \"$f\" -o \"${f%.mmd}.svg\" -t neutral; done",
+    "check": "node scripts/check-overflow.mjs"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "puppeteer"
+    ]
   },
   "devDependencies": {
-    "@marp-team/marp-cli": "^4"
+    "@marp-team/marp-cli": "^4",
+    "@mermaid-js/mermaid-cli": "^11.12.0",
+    "playwright": "^1.58.2"
   }
 }

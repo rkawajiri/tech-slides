@@ -1,0 +1,11 @@
+graph LR
+  App["LLMアプリ"] -->|OTel SDK| Collector["OTel Collector"]
+  Collector --> Trace["Cloud Trace"]
+  Collector --> Monitor["Cloud Monitoring"]
+  Collector --> BQ["BigQuery<br>分析用"]
+
+  style App fill:#e8f0fe,stroke:#36c,stroke-width:2px
+  style Collector fill:#fff3e0,stroke:#e80,stroke-width:2px
+  style Trace fill:#f1f1f1,stroke:#666
+  style Monitor fill:#f1f1f1,stroke:#666
+  style BQ fill:#f1f1f1,stroke:#666
