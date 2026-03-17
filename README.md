@@ -12,9 +12,9 @@ pnpm install
 
 | コマンド | 説明 |
 |---|---|
-| `pnpm run preview` | スライドのライブプレビュー |
+| `pnpm run preview <file>` | スライドのライブプレビュー |
 | `pnpm run build` | HTML にビルド（`dist/` に出力） |
-| `pnpm run pdf` | PDF にエクスポート |
+| `pnpm run pdf <file>` | PDF にエクスポート |
 | `pnpm run new` | 新しいスライドを作成 |
 | `pnpm run diagrams` | Mermaid 図を SVG に変換 |
 | `pnpm run check` | スライドのオーバーフローを検出 |
