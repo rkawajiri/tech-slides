@@ -3,3 +3,6 @@ dist/
 .DS_Store
 *.html
 *.pdf
+.claude/
+.playwright-mcp/
+.slidegauge.cache.json
