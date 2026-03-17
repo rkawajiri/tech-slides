@@ -3,6 +3,10 @@ dist/
 .DS_Store
 *.html
 *.pdf
-.claude/
 .playwright-mcp/
 .slidegauge.cache.json
+
+# Claude Code local-only (not shared with team)
+.claude/settings.local.json
+.claude/*.local.json
+.claude/*.local.md
