@@ -1,0 +1,13 @@
+{
+  "name": "tech-slides",
+  "private": true,
+  "scripts": {
+    "build": "for dir in $(find . -maxdepth 1 -regex './[0-9].*' -type d); do marp \"$dir/slides.md\" -o \"dist/$(basename $dir)/index.html\"; done",
+    "preview": "marp --preview",
+    "pdf": "marp --pdf",
+    "new": "bash scripts/new-slide.sh"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4"
+  }
+}
