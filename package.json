@@ -7,7 +7,9 @@
     "pdf": "marp --pdf",
     "new": "bash scripts/new-slide.sh",
     "diagrams": "for f in 2026-03-19/diagrams/*.mmd; do mmdc -i \"$f\" -o \"${f%.mmd}.svg\" -t neutral; done",
-    "check": "node scripts/check-overflow.mjs"
+    "check": "node scripts/check-overflow.mjs",
+    "textlint": "textlint '**/*.md'",
+    "textlint:fix": "textlint --fix '**/*.md'"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -17,6 +19,9 @@
   "devDependencies": {
     "@marp-team/marp-cli": "^4",
     "@mermaid-js/mermaid-cli": "^11.12.0",
-    "playwright": "^1.58.2"
+    "playwright": "^1.58.2",
+    "textlint": "^15.5.2",
+    "textlint-filter-rule-comments": "^1.3.0",
+    "textlint-rule-preset-ja-technical-writing": "^12.0.2"
   }
 }
