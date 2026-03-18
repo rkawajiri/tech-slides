@@ -1,11 +1,22 @@
 graph LR
-  App["LLMアプリ"] -->|OTel SDK| Collector["OTel Collector"]
-  Collector --> Trace["Cloud Trace"]
-  Collector --> Monitor["Cloud Monitoring"]
-  Collector --> BQ["BigQuery<br>分析用"]
+  subgraph App["アプリケーション"]
+    API["API サーバー\nPython / Go"]
+    LLM["LLM 呼び出し\ngen_ai.* spans"]
+  end
 
-  style App fill:#e8f0fe,stroke:#36c,stroke-width:2px
-  style Collector fill:#fff3e0,stroke:#e80,stroke-width:2px
-  style Trace fill:#f1f1f1,stroke:#666
-  style Monitor fill:#f1f1f1,stroke:#666
-  style BQ fill:#f1f1f1,stroke:#666
+  API --> OTel["OTel Collector"]
+  LLM --> OTel
+
+  subgraph GCP["Google Cloud"]
+    Trace["Cloud Trace\n分散トレーシング"]
+    Mon["Cloud Monitoring\nメトリクス・アラート"]
+    BQ["BigQuery\n長期分析"]
+  end
+
+  OTel --> Trace
+  OTel --> Mon
+  OTel --> BQ
+
+  style App fill:#e8f0fe,stroke:#1a73e8,stroke-width:2px
+  style GCP fill:#f1f3f4,stroke:#5f6368,stroke-width:2px
+  style OTel fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000

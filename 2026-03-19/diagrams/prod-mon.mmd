@@ -1,8 +1,11 @@
-graph LR
-  D0[Deploy] --> D1["ルールベース<br>全件・リアルタイム"]
-  D1 --> D2["LLM judge<br>サンプリング"]
-  D2 --> D3["人間フィードバック<br>エスカレーション"]
+graph TD
+  D["Deploy"] --> L1
 
-  style D1 fill:#dfd,stroke:#080,stroke-width:3px
-  style D2 fill:#ffd,stroke:#a80,stroke-width:3px
-  style D3 fill:#fdd,stroke:#c00,stroke-width:3px
+  L1["Layer 1 — ルールベース\n全件 ・ リアルタイム ・ 自動"]
+  L1 --> L2["Layer 2 — LLM Judge\nサンプリング ・ 非同期 ・ 自動"]
+  L2 --> L3["Layer 3 — 人間レビュー\nエスカレーション ・ 手動"]
+
+  style D fill:#e8eaf6,stroke:#3949ab,stroke-width:2px,color:#000
+  style L1 fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+  style L2 fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#000
+  style L3 fill:#f8d7da,stroke:#dc3545,stroke-width:2px,color:#000

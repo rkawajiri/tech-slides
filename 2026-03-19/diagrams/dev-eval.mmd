@@ -1,8 +1,10 @@
-graph LR
-  C1["Tier 1<br>ANTLR4 形式検証"] -->|軽量・全件| C2["Tier 2<br>LLM Judge（軽量モデル）"]
-  C2 -->|中量・CI| C3["Tier 3<br>LLM Judge（重厚モデル）"]
-  C3 -->|重量・週次| C4[Deploy]
+graph TD
+  T1["Tier 1 — ANTLR4 形式検証\n全件 ・ コスト極小 ・ 毎回"]
+  T2["Tier 2 — LLM Judge（軽量モデル）\nCI／バッチ ・ コスト中 ・ 定期"]
+  T3["Tier 3 — LLM Judge（重厚モデル）\nサンプリング ・ コスト高 ・ 週次"]
 
-  style C1 fill:#dfd,stroke:#080,stroke-width:3px
-  style C2 fill:#ffd,stroke:#a80,stroke-width:3px
-  style C3 fill:#fdd,stroke:#c00,stroke-width:3px
+  T1 --> T2 --> T3
+
+  style T1 fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+  style T2 fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#000
+  style T3 fill:#f8d7da,stroke:#dc3545,stroke-width:2px,color:#000

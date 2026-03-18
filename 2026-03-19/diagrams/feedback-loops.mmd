@@ -1,9 +1,20 @@
 graph LR
-  P[Prompt設計] --> E[開発評価] --> D[Deploy] --> M[本番監視] --> A[分析・改善]
+  subgraph Dev["開発"]
+    P["Prompt 設計"] --> E["評価\nTier 1 / 2 / 3"]
+  end
 
-  E -.->|"①② 開発ループ"| P
-  A -.->|"③ 本番ループ"| P
-  A -.->|"④ 評価指標の追加"| E
+  E --> D["Deploy"]
 
-  style E fill:#ff9,stroke:#e80,stroke-width:3px
-  style M fill:#ff9,stroke:#e80,stroke-width:3px
+  subgraph Prod["本番"]
+    D --> M["監視\n3層モニタリング"]
+    M --> A["分析・改善"]
+  end
+
+  E -. "① 即時修正\n形式エラー → 分単位" .-> P
+  E -. "② 設計見直し\n低スコア → 日単位" .-> P
+  A -. "③ 長期改善\nユーザーFB → 週〜月" .-> P
+  A -. "④ 指標還元\n本番分析 → 月単位" .-> E
+
+  style Dev fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Prod fill:#fff3e0,stroke:#e65100,stroke-width:2px
+  style D fill:#e8eaf6,stroke:#3949ab,stroke-width:2px,color:#000
