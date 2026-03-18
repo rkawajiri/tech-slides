@@ -226,7 +226,7 @@ metric = FaithfulnessMetric(threshold=0.7)
 
 ### 今後やりたいこと
 - Langfuse で LLM 特化のオブザーバビリティを実現
-- DSPy でプロンプト最適化の自動化
+- OTel Collector 導入で送信先の柔軟化・tail-based sampling
 
 ---
 
