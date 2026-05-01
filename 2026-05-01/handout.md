@@ -72,8 +72,11 @@
 - 学習されたルーティング: xRouter(RLベース、2025年10月)、OmniRouter/ECCOS、RouteLLM、FrugalGPT、Router-R1
 - マルチモデル・オーケストレーション: Pick and Spin(Kubernetes、self-hosted LLM、2025年12月)
 - Generalized Routing: MoMA(異種LLMプール対応)
+- マルチLLM協調推論(inference-time scaling): AB-MCTS / Multi-LLM AB-MCTS(Sakana AI、ICLR 2025 Workshop、Thompson Samplingで「広く探索 vs 深く改善」を動的選択。OSS実装は TreeQuest)、Mixture-of-Agents(Together AI、2024年、階層型multi-LLM、OSSモデルだけでAlpacaEval 2.0で65.1%)、Conductor(Sakana AI、ICLR 2026、RLで訓練した7Bコーディネーターが任意プールを協調)、Trinity(Sakana AI、ICLR 2026、0.6Bコーディネーター + 進化戦略、Thinker/Worker/Verifierロールを動的割当て)
 
 **サービス・インフラ例**: OpenRouter(2025年6月に4,000万ドル調達、623+モデル)、LiteLLM、Bifrost、Portkey
+
+**商用展開例**: Sakana Fugu(Conductor + Trinityをベースとする多エージェントFM、フロンティアモデルを協調させる商用プロダクト)
 
 **市場規模**: エンタープライズLLM支出は2025年に84億ドル(2024年は35億ドル)。intelligent routingで30〜85%のコスト削減が報告されている。
 
@@ -136,7 +139,7 @@
 - 一般化可能性: 特定企業の特定データに依存しない、再現可能な手法
 - 完結性: 学位論文や学会発表のスコープに収まる、明確な始まりと終わりがある
 
-段階4(ルーティング)、段階5(蒸留・fine-tune)はこの3条件を満たしやすい。アルゴリズムを提案し、公開ベンチマークで測り、論文に閉じる。xRouter、RouteLLM、FrugalGPT、Adapt-and-Distill、Agent Fine-tuning through Distillation — 全て条件を満たす。同様に、メモリ研究(LongMemEval、MemMachine、Field-Theoretic Memory)も評価可能性を確保しやすく、2025年に集中投稿されている。
+段階4(ルーティング・マルチモデル協調)、段階5(蒸留・fine-tune)はこの3条件を満たしやすい。アルゴリズムを提案し、公開ベンチマークで測り、論文に閉じる。xRouter、RouteLLM、FrugalGPT、Mixture-of-Agents(Together AI)、AB-MCTS / Conductor / Trinity(Sakana AI)、Adapt-and-Distill、Agent Fine-tuning through Distillation — 全て条件を満たす。同様に、メモリ研究(LongMemEval、MemMachine、Field-Theoretic Memory)も評価可能性を確保しやすく、2025年に集中投稿されている。
 
 ところが**段階3の本質部分**(データ収集UXの設計、preference dataの構造化、trajectory loggingの設計)は、この3条件と相性が悪い。
 
@@ -558,13 +561,17 @@ Cursorの編集、Midjourneyの選択、Character.AIの会話。データ収集�
 - Digital Applied "AI Product Failures 2026: Sora, Humane & Rabbit R1"
 - Generational, "Unpacking Big Tech's quasi-acquisitions of GenAI companies"
 
-### 段階4(ルーティング)関連論文
+### 段階4(ルーティング・マルチモデル協調)関連論文
 
 - xRouter: "Training Cost-Aware LLMs Orchestration System via Reinforcement Learning" (arXiv:2510.08439)
 - OmniRouter/ECCOS (arXiv:2502.20576)
 - Pick and Spin (arXiv:2512.22402)
 - MoMA: "Towards Generalized Routing" (arXiv:2509.07571)
 - RouteLLM、FrugalGPT、Router-R1(先行研究)
+- Mixture-of-Agents (Together AI): "Mixture-of-Agents Enhances Large Language Model Capabilities" (arXiv:2406.04692)
+- AB-MCTS (Sakana AI): "Wider or Deeper? Scaling LLM Inference-Time Compute with Adaptive Branching Tree Search" (arXiv:2503.04412、ICLR 2025 Workshop。OSS実装: TreeQuest)
+- Conductor (Sakana AI): "Learning to Orchestrate Agents in Natural Language with the Conductor" (arXiv:2512.04388、ICLR 2026)
+- Trinity (Sakana AI): "TRINITY: An Evolved LLM Coordinator" (arXiv:2512.04695、ICLR 2026)
 
 ### 段階5(蒸留・fine-tune)関連論文
 
