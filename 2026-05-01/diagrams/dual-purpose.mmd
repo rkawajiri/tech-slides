@@ -1,0 +1,15 @@
+flowchart LR
+  UX["同じUXフロー<br/>（ユーザーの自然な利用行為）"]
+
+  VAL["💡 ユーザーへの価値提供<br/>・編集を補完<br/>・複数案から選ぶ<br/>・キャラと会話する"]
+
+  DATA["📊 データ蓄積<br/>・preference signal<br/>・trajectory log<br/>・evaluation pair"]
+
+  UX --> VAL
+  UX --> DATA
+
+  VAL -.同じ行為.-> DATA
+
+  style UX fill:#e7f3ff,stroke:#0d6efd,stroke-width:3px,color:#000
+  style VAL fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#000
+  style DATA fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#000

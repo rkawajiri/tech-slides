@@ -6,7 +6,7 @@
     "preview": "marp --preview",
     "pdf": "marp --pdf",
     "new": "bash scripts/new-slide.sh",
-    "diagrams": "for f in 2026-03-19/diagrams/*.mmd; do mmdc -i \"$f\" -o \"${f%.mmd}.svg\" -t neutral; done",
+    "diagrams": "for dir in $(find . -maxdepth 1 -regex './[0-9].*' -type d); do for f in \"$dir\"/diagrams/*.mmd; do [ -f \"$f\" ] && mmdc -i \"$f\" -o \"${f%.mmd}.svg\" -t neutral; done; done",
     "check": "node scripts/check-overflow.mjs",
     "textlint": "textlint '**/*.md'",
     "textlint:fix": "textlint --fix '**/*.md'"

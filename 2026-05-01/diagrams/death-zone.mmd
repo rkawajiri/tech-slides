@@ -1,0 +1,18 @@
+flowchart LR
+  subgraph DEATH["💀 実際の死亡ゾーン"]
+    D3["段階3<br/>独自データ蓄積"]
+  end
+
+  subgraph PAPERS["📚 論文集中ゾーン"]
+    P4["段階4<br/>ルーティング"]
+    P5["段階5<br/>蒸留 / fine-tune"]
+  end
+
+  D3 -.越えられず.-> P4
+  P4 --> P5
+
+  style D3 fill:#f8d7da,stroke:#dc3545,stroke-width:3px,color:#000
+  style P4 fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#000
+  style P5 fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#000
+  style DEATH fill:#fff5f5,stroke:#dc3545,stroke-width:2px,color:#000
+  style PAPERS fill:#fffdf0,stroke:#ffc107,stroke-width:2px,color:#000
