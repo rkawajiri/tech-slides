@@ -89,6 +89,8 @@
 - TuneShift-KD(fine-tuned modelから新base modelへの知識転移)
 - FineScope(SAE-guidedデータ選択 + structured pruning + self-distillation)
 - Agent Fine-tuning through Distillation(microdomain向け、JP1での14%性能向上)
+- RLVR(Reinforcement Learning with Verifiable Rewards): math/code/引用検証など機械的に正解判定可能な領域で reward model を介さず直接報酬を計算するpost-training。代表例: DeepSeek-R1 / R1-Zero(2025年1月、純粋RLで推論能力を引き出す、Nature 2025掲載)、Tülü 3(AI2、2024年11月、SFT→DPO→RLVRの3段階recipe)、Open-Reasoner-Zero(2025年3月、最小構成のオープン再現、DeepSeek-R1-Zeroの1/10ステップで同等性能)、DAPO(ByteDance、2025年3月、GRPO改良)、GRPO(DeepSeekMath、value network不要のグループ相対比較)
+- Teacher-Studentデータ合成: 強力な教師モデルで instruction / preference / reasoning trajectory を合成し生徒を訓練。代表例: Self-Instruct(EMNLP 2023、自己生成によるインストラクション拡張)、WizardLM / Evol-Instruct(指示の難易度を進化)、Orca 2(教師の説明過程ごと模倣)、Phi-3 / Phi-4(合成textbookで小型モデルがGPT-3.5級)、Nemotron-4 340B(NVIDIA、2024年6月、**訓練データの98%が合成**、合成データ生成パイプラインを公開)、Magpie(ICLR 2025、空テンプレートだけでaligned LLMから自動生成)、Cosmopedia(HuggingFace、Phi系列に倣った合成textbookコーパス)
 
 **サービス例**: Cursorの自社Tabモデル/Applyモデル、Perplexity Sonar、Replitのコード補完モデル
 
@@ -426,6 +428,14 @@ bias-corrected judgeやItem Response Theoryベースのrubricを実装するに�
 **含意3: 不可視な蓄積の方が強い**
 ユーザーから見える蓄積(「Claudeが私のことを覚えている」)は説明しやすいが、モートの観点では**ユーザーから不可視な蓄積**(嗜好データ、軌跡データ、評価データ)の方が競合が真似しにくく、自社モデル化への燃料効率が高い場合が多い。Character.AIの本質は個別記憶ではなく全ユーザー横断の会話engagement data、Cursorも個別プロジェクト記憶よりも全ユーザー横断のedit acceptance dataにある。
 
+**含意4: 合成データで代替できる領域とできない領域を分ける**
+Self-Instruct、WizardLM、Phi-3 / Phi-4、Nemotron-4 340B(訓練データの98%が合成)、Magpieなどが示すように、teacher-studentデータ合成は急速に強力になっている。**段階3で集めなくてもteacher経由で済む領域**は確実にある。
+
+- 合成で済む(段階3不要 or 補助的): 一般的な指示追従、math/code reasoning、対話品質、common-sense
+- 合成で済まない(段階3が必須): 自社ユーザー特有の嗜好分布、自社プロダクト固有の失敗パターン、企業内ドメイン専門家の暗黙知(Harveyの判例引用ネットワーク、Gleanのエンティティグラフ)、組織のworkflow、現場でのエッジケース
+
+DeepSeek-R1の成功は「verifiable rewardがある領域では教師なしで自己ブートストラップできる」ことを示したが、これは段階3が不要になったのではなく、**段階3で何を集めるべきかの基準が上がった**ことを意味する。teacher経由で取れるデータは明日のコモディティで、自社にしか取れない種類のデータに集中投資すべき。
+
 ### 6.5 段階3を抜けたサービスの共通パターン
 
 抜けたサービスを観察すると共通点がある。
@@ -434,7 +444,7 @@ bias-corrected judgeやItem Response Theoryベースのrubricを実装するに�
 Cursorの編集、Midjourneyの選択、Character.AIの会話。データ収集が独立した作業ではなく、本来の利用行為そのものから自然発生する。
 
 **(b) 集まるデータが「客観的に検証可能」**
-コードはコンパイル可能性で評価できる、画像は人間が選んだものが正解、検索は引用元の存在で検証できる。**正解が事後的に分かる**ドメインを選んでいる。逆にロールプレイ品質や創作の良し悪しのような客観的検証が弱いドメインは、段階3→段階5の移行が難しくなる。
+コードはコンパイル可能性で評価できる、画像は人間が選んだものが正解、検索は引用元の存在で検証できる。**正解が事後的に分かる**ドメインを選んでいる。逆にロールプレイ品質や創作の良し悪しのような客観的検証が弱いドメインは、段階3→段階5の移行が難しくなる。これは **RLVR(Reinforcement Learning with Verifiable Rewards)** が成立する前提条件と同じ — DeepSeek-R1やTülü 3が示したように、機械的に検証可能な報酬がある領域では reward model を介さず段階3で集めたタスクログから直接ポリシー最適化できる。逆にこの条件が満たせない領域では DPO / RLAIF への依存が残り、preference data の質と量がボトルネックになり続ける。
 
 **(c) 段階1の段階で既に段階3を見据えている**
 創業時から「何を蓄積するか」が明確。Cursorは創業時からエディタフォークを選び、編集ログ全部を取れる体制を作った。
@@ -476,7 +486,11 @@ Cursorの編集、Midjourneyの選択、Character.AIの会話。データ収集�
 - **KTO** (Kahneman-Tversky Optimization): DPOの派生。binary feedbackで動く
 - **RLHF** (RL from Human Feedback): 人間のフィードバックを報酬信号にした強化学習
 - **RLAIF** (RL from AI Feedback): RLHFのフィードバックをAIに置き換えたもの
+- **RLVR** (RL from Verifiable Rewards): 答えが機械的に検証可能(math、コードのテスト通過、引用元の存在)な領域で reward model を介さず直接報酬を計算するpost-training。DeepSeek-R1 / Tülü 3で広く知られるようになった
+- **GRPO** (Group Relative Policy Optimization): DeepSeekMath / DeepSeek-R1で使われたPPO派生アルゴリズム。グループ内の相対比較で advantage を推定し、value network 不要
 - **Knowledge Distillation**: 大モデル(教師)から小モデル(生徒)へ知識転移
+- **Self-Instruct / Evol-Instruct**: LLM自身に少量シードから合成させる(Self-Instruct)、既存指示を進化させる(Evol-Instruct / WizardLM)データ合成手法
+- **Teacher-Studentデータ合成**: 強力な教師モデル(GPT-5、Claude 4.7、Gemini 2.5等)で instruction / preference / trajectory を生成し、小型の生徒モデルを訓練するパイプライン全般。Nemotron-4 340Bの訓練データの98%が合成、というのが代表的指標
 
 ### RAG・検索
 
@@ -573,13 +587,33 @@ Cursorの編集、Midjourneyの選択、Character.AIの会話。データ収集�
 - Conductor (Sakana AI): "Learning to Orchestrate Agents in Natural Language with the Conductor" (arXiv:2512.04388、ICLR 2026)
 - Trinity (Sakana AI): "TRINITY: An Evolved LLM Coordinator" (arXiv:2512.04695、ICLR 2026)
 
-### 段階5(蒸留・fine-tune)関連論文
+### 段階5(post-training: 蒸留・RLVR・データ合成)関連論文
+
+**蒸留・fine-tune**
 
 - Adapt-and-Distill (arXiv:2106.13474)
 - Flipping Knowledge Distillation (ACL 2025)
 - TuneShift-KD (arXiv:2603.24518)
 - FineScope (arXiv:2505.00624)
 - Agent Fine-tuning through Distillation (arXiv:2510.00482)
+
+**RLVR (Reinforcement Learning with Verifiable Rewards)**
+
+- DeepSeek-R1: "Incentivizing Reasoning Capability in LLMs via Reinforcement Learning" (arXiv:2501.12948、Nature 2025掲載)
+- Tülü 3 (Allen Institute): "Pushing Frontiers in Open Language Model Post-Training" (arXiv:2411.15124)
+- Open-Reasoner-Zero: "An Open Source Approach to Scaling Up Reinforcement Learning on the Base Model" (arXiv:2503.24290)
+- DAPO (ByteDance): "An Open-Source LLM Reinforcement Learning System at Scale" (arXiv:2503.14476)
+- DeepSeekMath / GRPO: "Pushing the Limits of Mathematical Reasoning in Open Language Models" (arXiv:2402.03300)
+
+**Teacher-Studentデータ合成**
+
+- Self-Instruct (arXiv:2212.10560)
+- WizardLM / Evol-Instruct (arXiv:2304.12244)
+- Orca 2 (arXiv:2311.11045)
+- Phi-3 Technical Report (arXiv:2404.14219)
+- Nemotron-4 340B Technical Report (arXiv:2406.11704、訓練データの98%が合成)
+- Magpie (arXiv:2406.08464、ICLR 2025、aligned LLMから空テンプレートで自動生成)
+- Cosmopedia (HuggingFace、Phi系列に倣った合成textbookコーパス)
 
 ### メモリ・段階3技術関連論文
 
